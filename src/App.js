@@ -138,6 +138,10 @@ export default function App() {
     console.log(userCoordinates);
   }, [userCoordinates]);
 
+  useEffect(() => {
+    ref.current.focus();
+  });
+
   return (
     <div className="App">
       <p>Count: {countState.count}</p>
@@ -148,7 +152,11 @@ export default function App() {
         +1/+2
       </button>
       <button onClick={() => dispatch({ type: "reset" })}>x</button>
-      <input value={text} />
+      <input
+        ref={ref}
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+      />
       <UserList users={users} />
     </div>
   );
