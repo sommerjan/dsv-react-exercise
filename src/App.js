@@ -60,6 +60,16 @@ function mapUserValues(users) {
   });
 }
 
+function mapUserLngCoordinates(users) {
+  return users.map((user) => {
+    let lng = 0;
+    if (user && user.address && user.address.geo && user.address.geo.lng) {
+      lng = user.address.geo.lng;
+    }
+    return Number(lng);
+  });
+}
+
 function findCompanyName(user) {
   return user.company !== null ? user.company.name : "";
 }
@@ -107,6 +117,7 @@ function Geo(props) {
 export default function App() {
   const [users, setUsers] = useState([]);
   const [text, setText] = useState("");
+  const [userCoordinates, setUserCoordinates] = useState(0);
   const [countState, dispatch] = useReducer(reducer, { count: 0 });
   const ref = useRef(null);
 
@@ -116,6 +127,16 @@ export default function App() {
 
     setUsers(mappedUsers);
   }, []);
+
+  useEffect(() => {
+    const userCoordinatesList = mapUserLngCoordinates(Users);
+    const userCoordinatesSum = userCoordinatesList.reduce(
+      (previousValue, currentValue) => previousValue + currentValue
+    );
+
+    setUserCoordinates(userCoordinatesSum);
+    console.log(userCoordinates);
+  }, [userCoordinates]);
 
   return (
     <div className="App">
