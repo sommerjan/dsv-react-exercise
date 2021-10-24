@@ -1,5 +1,6 @@
 import "./styles.css";
-import { useReducer, useRef, useState } from "react";
+import { useReducer, useRef, useState, useEffect } from "react";
+import Users from "./data";
 
 /** Instructions
    0. Fork this codesandbox and sync it with your github 
@@ -36,11 +37,70 @@ function reducer(state, action) {
   }
 }
 
+function filterUsersByAge(users, age) {
+  return users.filter((user) => user.age >= age);
+}
+
+function mapUserValues(users) {
+  return users.map((user) => {
+    return {
+      username: user.username,
+      address: user.address,
+      age: user.age,
+      companyName: findCompanyName(user)
+    };
+  });
+}
+
+function findCompanyName(user) {
+  return user.company !== null ? user.company.name : "";
+}
+
+function UserList(props) {
+  return props.users.map((user) => {
+    return (
+      <li key={user.username}>
+        {user.companyName} - <Address address={user.address} />
+      </li>
+    );
+  });
+}
+
+function Address(props) {
+  if (!props.address) {
+    return <span />;
+  }
+  return (
+    <span>
+      {props.address.street}, {props.address.suite}, {props.address.city},{" "}
+      {props.address.zipcode}, <Geo geo={props.address.geo} />
+    </span>
+  );
+}
+
+function Geo(props) {
+  if (!props.geo) {
+    return <span />;
+  }
+  return (
+    <span>
+      {props.geo.lat}, {props.geo.lng}
+    </span>
+  );
+}
+
 export default function App() {
   const [users, setUsers] = useState([]);
   const [text, setText] = useState("");
   const [countState, dispatch] = useReducer(reducer, { count: 0 });
   const ref = useRef(null);
+
+  useEffect(() => {
+    const filteredUsers = filterUsersByAge(Users, 18);
+    const mappedUsers = mapUserValues(filteredUsers);
+
+    setUsers(mappedUsers);
+  }, []);
 
   return (
     <div className="App">
@@ -48,6 +108,7 @@ export default function App() {
       <button onClick={() => dispatch({ type: "decrement" })}>-</button>
       <button onClick={() => dispatch({ type: "increment" })}>+</button>
       <input value={text} />
+      <UserList users={users} />
     </div>
   );
 }
