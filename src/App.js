@@ -57,13 +57,13 @@ function findCompanyName(user) {
 }
 
 function UserList(props) {
-  return props.users.map((user) => {
-    return (
-      <li key={user.username}>
-        {user.companyName} - <Address address={user.address} />
-      </li>
-    );
-  });
+  return props.users.map(user => (
+    <li key={user.username}><User user={user} /></li>
+  ));
+}
+
+function User(props) {
+  return <span>{props.user.username} - <Address address={props.user.address} /> - {props.user.age} - {props.user.companyName}</span>;
 }
 
 function Address(props) {
