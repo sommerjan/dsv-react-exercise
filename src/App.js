@@ -31,7 +31,15 @@ function reducer(state, action) {
     case "increment":
       return { count: state.count + 1 };
     case "decrement":
-      return { count: state.count - 1 };
+      return { count: state.count >= 1 ? state.count - 1 : 0 };
+    case "incrementDouble":
+      return { count: state.count + 2 };
+    case "incrementNearestOdd":
+      return {
+        count: state.count % 2 === 1 ? state.count + 2 : state.count + 1
+      };
+    case "reset":
+      return { count: 0 };
     default:
       throw new Error();
   }
@@ -57,13 +65,20 @@ function findCompanyName(user) {
 }
 
 function UserList(props) {
-  return props.users.map(user => (
-    <li key={user.username}><User user={user} /></li>
+  return props.users.map((user) => (
+    <li key={user.username}>
+      <User user={user} />
+    </li>
   ));
 }
 
 function User(props) {
-  return <span>{props.user.username} - <Address address={props.user.address} /> - {props.user.age} - {props.user.companyName}</span>;
+  return (
+    <span>
+      {props.user.username} - <Address address={props.user.address} /> -{" "}
+      {props.user.age} - {props.user.companyName}
+    </span>
+  );
 }
 
 function Address(props) {
@@ -107,6 +122,11 @@ export default function App() {
       <p>Count: {countState.count}</p>
       <button onClick={() => dispatch({ type: "decrement" })}>-</button>
       <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: "incrementDouble" })}>+2</button>
+      <button onClick={() => dispatch({ type: "incrementNearestOdd" })}>
+        +1/+2
+      </button>
+      <button onClick={() => dispatch({ type: "reset" })}>x</button>
       <input value={text} />
       <UserList users={users} />
     </div>
