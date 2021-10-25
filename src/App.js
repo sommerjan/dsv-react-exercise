@@ -46,56 +46,59 @@ function reducer(state, action) {
 }
 
 function filterUsersByAge(users, age) {
-  return users.filter((user) => user.age >= age);
+  return !users ? [] : users.filter((user) => user.age >= age);
 }
 
 function mapUserValues(users) {
-  return users.map((user) => {
-    return {
-      username: user.username,
-      address: user.address,
-      age: user.age,
-      companyName: findCompanyName(user)
-    };
-  });
-}
-
-function mapUserLngCoordinates(users) {
-  return users.map((user) => {
-    let lng = 0;
-    if (user && user.address && user.address.geo && user.address.geo.lng) {
-      lng = user.address.geo.lng;
-    }
-    return Number(lng);
-  });
+  return !users
+    ? []
+    : users.map((user) => {
+        return {
+          username: user.username,
+          address: user.address,
+          age: user.age,
+          companyName: findCompanyName(user)
+        };
+      });
 }
 
 function findCompanyName(user) {
   return user.company !== null ? user.company.name : "";
 }
 
+function mapUserLngCoordinates(users) {
+  return !users
+    ? []
+    : users.map((user) => {
+        let lng = 0;
+        if (user.address && user.address.geo && user.address.geo.lng) {
+          lng = user.address.geo.lng;
+        }
+        return Number(lng);
+      });
+}
+
 function UserList(props) {
-  return props.users.map((user) => (
-    <li key={user.username}>
-      <User user={user} />
-    </li>
-  ));
+  return !props.users
+    ? null
+    : props.users.map((user) => (
+        <div key={user.username}>
+          <User user={user} />
+        </div>
+      ));
 }
 
 function User(props) {
-  return (
+  return !props.user ? null : (
     <span>
-      {props.user.username} - <Address address={props.user.address} /> -{" "}
-      {props.user.age} - {props.user.companyName}
+      {props.user.username}, {props.user.age}, {props.user.companyName} -{" "}
+      <Address address={props.user.address} />
     </span>
   );
 }
 
 function Address(props) {
-  if (!props.address) {
-    return <span />;
-  }
-  return (
+  return !props.address ? null : (
     <span>
       {props.address.street}, {props.address.suite}, {props.address.city},{" "}
       {props.address.zipcode}, <Geo geo={props.address.geo} />
@@ -104,12 +107,9 @@ function Address(props) {
 }
 
 function Geo(props) {
-  if (!props.geo) {
-    return <span />;
-  }
-  return (
+  return !props.geo ? null : (
     <span>
-      {props.geo.lat}, {props.geo.lng}
+      ({props.geo.lat}, {props.geo.lng})
     </span>
   );
 }
